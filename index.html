@@ -25,6 +25,12 @@
 
     <div id="formStatus"></div>
 
+    <!-- Honeypot: hidden from real users, bots that auto-fill forms tend to fill it in. -->
+    <div class="hp-field" aria-hidden="true">
+      <label for="companyWebsite">Leave this field blank</label>
+      <input type="text" id="companyWebsite" name="companyWebsite" tabindex="-1" autocomplete="off" />
+    </div>
+
     <div class="field">
       <label for="yourName">Your Name</label>
       <input type="text" id="yourName" name="yourName" autocomplete="name" required />
@@ -43,12 +49,14 @@
       <!-- Edit the options below to match your team's actual service lines -->
       <select id="serviceLine" name="serviceLine" required>
         <option value="" disabled selected>Select your service line</option>
-        <option value="engineering">Engineering</option>
-        <option value="design">Design</option>
-        <option value="product">Product</option>
-        <option value="sales">Sales</option>
-        <option value="marketing">Marketing</option>
-        <option value="support">Support</option>
+        <option value="engineering">ACT</option>
+        <option value="building-consultancy">Building Consultancy</option>
+        <option value="building-safety-consultancy">Building Safety Consultancy</option>
+        <option value="facade">Facade</option>
+        <option value="fire-engineering">Fire Engineering</option>
+        <option value="mc-plan">MC Plan</option>
+        <option value="services-engineering">Services Engineering</option>
+        <option value="technical">Technical</option>
       </select>
       <div class="error-text" id="serviceError" hidden>Please select a service line.</div>
     </div>
@@ -72,8 +80,10 @@
   </form>
 </main>
 
-<p class="footer-note">Submissions are stored in this browser only (via <code>localStorage</code>) — see the comment at the top of <code>form.js</code> for notes on wiring up shared, cross-device storage.</p>
+<p class="footer-note">Submissions are stored in a shared Supabase project, visible to everyone — see <code>supabase-config.js</code> and the top of <code>form.js</code> for details.</p>
 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script src="supabase-config.js"></script>
 <script src="form.js"></script>
 </body>
 </html>

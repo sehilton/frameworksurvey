@@ -1,26 +1,22 @@
 /* =========================================================
    form.js — Framework Feedback submission form
 
-   STORAGE NOTE (read this before deploying):
+   STORAGE NOTE:
    This is a fully static, serverless-friendly build (works as-is on
    Netlify, Vercel, GitHub Pages, etc. — no backend required). Submissions
-   are persisted with the browser's localStorage, under the key below.
-   That means submissions are private to *this browser on this device* —
-   they will not appear for other visitors or on other devices.
+   go straight from the browser to a shared Supabase project (see
+   supabase-config.js): the answers as a row in the `submissions` table,
+   and the uploaded file in the `documents` storage bucket. Everyone who
+   opens results.html sees the same shared list.
 
-   If you need everyone's submissions to land in one shared place, the
-   two common serverless-friendly upgrades are:
-     1. Netlify Forms (netlify.com/products/forms) — add a
-        `data-netlify="true"` attribute to the <form>, no JS storage code
-        needed, submissions collect in your Netlify dashboard.
-     2. A small serverless function (Netlify Functions / Vercel Functions)
-        that writes to a database (FaunaDB, Supabase, Airtable, etc.) —
-        swap the localStorage calls below for a fetch() to that function.
+   This uses Supabase's public "publishable" key, which only works within
+   the Row Level Security policies set on the project (currently: anyone
+   can insert a submission, no auth). Never put the database password or
+   a service-role key in client-side code.
    ========================================================= */
 
-const STORAGE_KEY = 'frameworkSubmissions';
-
 const form           = document.getElementById('feedbackForm');
+const honeypotInput  = document.getElementById('companyWebsite');
 const nameInput      = document.getElementById('yourName');
 const likesInput     = document.getElementById('likesFramework');
 const serviceInput   = document.getElementById('serviceLine');
@@ -133,29 +129,6 @@ function validate() {
 
 /* ---------- helpers ---------- */
 
-function readFileAsDataURL(file) {
-  return new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.onload = () => resolve(reader.result);
-    reader.onerror = () => reject(reader.error);
-    reader.readAsDataURL(file);
-  });
-}
-
-function loadSubmissions() {
-  try {
-    const raw = localStorage.getItem(STORAGE_KEY);
-    return raw ? JSON.parse(raw) : [];
-  } catch (err) {
-    console.error('Could not read existing submissions:', err);
-    return [];
-  }
-}
-
-function saveSubmissions(list) {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(list));
-}
-
 function showStatus(message, type) {
   formStatus.innerHTML =
     `<div class="status-banner status-banner--${type}">${message}</div>`;
@@ -166,6 +139,14 @@ function showStatus(message, type) {
 form.addEventListener('submit', async (e) => {
   e.preventDefault();
   formStatus.innerHTML = '';
+
+  if (honeypotInput && honeypotInput.value.trim() !== '') {
+    // Almost certainly a bot. Pretend it worked so it doesn't adapt, but
+    // don't actually write anything.
+    showStatus('Sheet saved. Redirecting to results…', 'ok');
+    setTimeout(() => { window.location.href = 'results.html'; }, 400);
+    return;
+  }
 
   if (!validate()) {
     showStatus('Please fix the highlighted fields before submitting.', 'error');
@@ -178,39 +159,42 @@ form.addEventListener('submit', async (e) => {
   submitButton.textContent = 'Saving…';
 
   try {
-    const fileData = await readFileAsDataURL(file);
+    const submissionId = (crypto.randomUUID && crypto.randomUUID()) ||
+        `${Date.now()}-${Math.random().toString(16).slice(2)}`;
+    const filePath = `${submissionId}/${file.name}`;
 
-    const submission = {
-      id: (crypto.randomUUID && crypto.randomUUID()) ||
-          `${Date.now()}-${Math.random().toString(16).slice(2)}`,
-      title: stripExtension(file.name) || file.name,
-      name: nameInput.value.trim(),
-      likesFramework: likesInput.checked,
-      serviceLine: serviceInput.options[serviceInput.selectedIndex].text,
-      fileName: file.name,
-      fileType: file.type || 'application/octet-stream',
-      fileSize: file.size,
-      fileData, // base64 data URL
-      submittedAt: new Date().toISOString(),
-    };
+    const { error: uploadError } = await supabaseClient.storage
+      .from(SUPABASE_DOCUMENTS_BUCKET)
+      .upload(filePath, file, {
+        contentType: file.type || 'application/octet-stream',
+        upsert: false,
+      });
+    if (uploadError) throw uploadError;
 
-    const submissions = loadSubmissions();
-    submissions.push(submission);
-    saveSubmissions(submissions);
+    const { error: insertError } = await supabaseClient
+      .from('submissions')
+      .insert({
+        id: submissionId,
+        title: stripExtension(file.name) || file.name,
+        name: nameInput.value.trim(),
+        likes_framework: likesInput.checked,
+        service_line: serviceInput.options[serviceInput.selectedIndex].text,
+        file_name: file.name,
+        file_type: file.type || 'application/octet-stream',
+        file_size: file.size,
+        file_path: filePath,
+      });
+    if (insertError) throw insertError;
 
     showStatus('Sheet saved. Redirecting to results…', 'ok');
     window.location.href = 'results.html';
 
   } catch (err) {
     console.error(err);
-    if (err && err.name === 'QuotaExceededError') {
-      showStatus(
-        'This file is too large to store in the browser (localStorage limit). Try a smaller file, or wire up server-side storage — see the note at the top of form.js.',
-        'error'
-      );
-    } else {
-      showStatus('Something went wrong saving your submission. Please try again.', 'error');
-    }
+    showStatus(
+      `Something went wrong saving your submission${err && err.message ? `: ${err.message}` : ''}. Please try again.`,
+      'error'
+    );
     submitButton.disabled = false;
     submitButton.textContent = 'Submit sheet';
   }

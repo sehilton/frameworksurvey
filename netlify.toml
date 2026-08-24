@@ -1,0 +1,7 @@
+[[edge_functions]]
+  path = "/results.html"
+  function = "protect-results"
+
+[[edge_functions]]
+  path = "/results"
+  function = "protect-results"

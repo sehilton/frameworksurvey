@@ -169,6 +169,17 @@ a { color: inherit; }
   margin-bottom: 22px;
 }
 
+/* honeypot: off-screen rather than display:none, so simple bots that skip
+   hidden fields still tend to fill it in */
+.hp-field {
+  position: absolute;
+  left: -9999px;
+  top: -9999px;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+}
+
 .field label,
 .field legend {
   display: block;
@@ -430,6 +441,30 @@ table.results-table {
 
 .table-wrap {
   overflow-x: auto;
+}
+
+.form-detail-header {
+  margin-bottom: 18px;
+}
+.back-link {
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  margin-bottom: 14px;
+}
+.form-detail-title {
+  font-family: var(--mono);
+  font-size: clamp(18px, 3.2vw, 22px);
+  margin: 0;
+  color: var(--ink);
+  word-break: break-word;
+}
+.form-detail-sub {
+  font-family: var(--sans);
+  font-size: 13px;
+  color: var(--ink-soft);
+  margin-top: 4px;
 }
 
 /* ---------- detail panel ---------- */
