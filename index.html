@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Framework Feedback — Submission</title>
+<link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+<main class="sheet" id="formSheet">
+
+  <div class="title-block">
+    <div class="title-block__main">
+      <div class="title-block__eyebrow">Sheet 01 — Submission</div>
+      <h1 class="title-block__title is-placeholder" id="docTitle">Upload a document to name this sheet</h1>
+    </div>
+    <div class="title-block__meta">
+      <span id="metaExt" class="badge-ext" hidden></span>
+      <span><b id="metaDate"></b>date</span>
+    </div>
+  </div>
+
+  <form id="feedbackForm" class="form-body" novalidate>
+
+    <div id="formStatus"></div>
+
+    <div class="field">
+      <label for="yourName">Your Name</label>
+      <input type="text" id="yourName" name="yourName" autocomplete="name" required />
+      <div class="error-text" id="nameError" hidden>Please enter your name.</div>
+    </div>
+
+    <div class="field">
+      <div class="check-row">
+        <input type="checkbox" id="likesFramework" name="likesFramework" />
+        <label for="likesFramework">Do you like this framework?</label>
+      </div>
+    </div>
+
+    <div class="field">
+      <label for="serviceLine">Your Service Line</label>
+      <!-- Edit the options below to match your team's actual service lines -->
+      <select id="serviceLine" name="serviceLine" required>
+        <option value="" disabled selected>Select your service line</option>
+        <option value="engineering">Engineering</option>
+        <option value="design">Design</option>
+        <option value="product">Product</option>
+        <option value="sales">Sales</option>
+        <option value="marketing">Marketing</option>
+        <option value="support">Support</option>
+      </select>
+      <div class="error-text" id="serviceError" hidden>Please select a service line.</div>
+    </div>
+
+    <div class="field">
+      <label for="docFile">Upload Framework Document</label>
+      <div class="dropzone" id="dropzone">
+        <input type="file" id="docFile" name="docFile" required />
+        <div class="dropzone__label">Click to choose a file, or drag one here</div>
+        <div class="dropzone__filename" id="fileNamePreview"></div>
+      </div>
+      <div class="hint">Accepted: PDF, Word, text, or Markdown files. The sheet title above is generated from this file's name.</div>
+      <div class="error-text" id="fileError" hidden>Please choose a file to upload.</div>
+    </div>
+
+    <div class="actions">
+      <button type="submit" class="btn">Submit sheet</button>
+      <a class="link-quiet" href="results.html">View submitted sheets →</a>
+    </div>
+
+  </form>
+</main>
+
+<p class="footer-note">Submissions are stored in this browser only (via <code>localStorage</code>) — see the comment at the top of <code>form.js</code> for notes on wiring up shared, cross-device storage.</p>
+
+<script src="form.js"></script>
+</body>
+</html>

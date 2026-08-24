@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Framework Feedback — Submitted Sheets</title>
+<link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+<main class="sheet sheet--wide">
+
+  <div class="results-header">
+    <div class="results-header__row">
+      <div>
+        <div class="results-header__eyebrow">Drawing Index</div>
+        <h1>Submitted Sheets</h1>
+      </div>
+      <div style="display:flex; gap:12px; align-items:center;">
+        <a class="link-quiet" href="index.html">← New submission</a>
+        <button class="btn btn--ghost" id="clearAllBtn" type="button">Clear all</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="results-body">
+    <div id="resultsContent"></div>
+  </div>
+
+</main>
+
+<p class="footer-note">Reading from this browser's <code>localStorage</code> only. See the note in <code>form.js</code> for shared/cross-device storage options.</p>
+
+<!-- Detail overlay -->
+<div class="overlay" id="overlay">
+  <div class="sheet detail-card">
+    <div class="title-block">
+      <div class="title-block__main">
+        <div class="title-block__eyebrow" id="detailEyebrow">Sheet Detail</div>
+        <h1 class="title-block__title" id="detailTitle">—</h1>
+      </div>
+      <div class="title-block__meta">
+        <span class="badge-ext" id="detailExt" hidden></span>
+        <span><b id="detailDate">—</b>submitted</span>
+      </div>
+    </div>
+    <div class="detail-body">
+      <dl id="detailFields"></dl>
+      <div class="detail-actions">
+        <a class="btn" id="detailDownload" download>Download document</a>
+        <button class="btn btn--ghost" id="closeDetailBtn" type="button">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="results.js"></script>
+</body>
+</html>
