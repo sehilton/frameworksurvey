@@ -63,11 +63,11 @@
 
     <div class="field">
       <label for="docFile">Upload Framework Document</label>
-      <div class="dropzone" id="dropzone">
+      <label class="dropzone" id="dropzone" for="docFile">
         <input type="file" id="docFile" name="docFile" required />
         <div class="dropzone__label">Click to choose a file, or drag one here</div>
         <div class="dropzone__filename" id="fileNamePreview"></div>
-      </div>
+      </label>
       <div class="hint">Accepted: PDF, Word, text, or Markdown files. The sheet title above is generated from this file's name.</div>
       <div class="error-text" id="fileError" hidden>Please choose a file to upload.</div>
     </div>

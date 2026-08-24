@@ -255,6 +255,7 @@ button:focus-visible,
 
 /* file upload dropzone */
 .dropzone {
+  display: block;
   border: 1.5px dashed #9b917a;
   border-radius: var(--radius);
   background: #ffffffaa;
@@ -264,7 +265,8 @@ button:focus-visible,
   transition: border-color 0.15s ease, background 0.15s ease;
 }
 .dropzone:hover,
-.dropzone.is-dragover {
+.dropzone.is-dragover,
+.dropzone:focus-within {
   border-color: var(--line-2);
   background: #ffffff;
 }

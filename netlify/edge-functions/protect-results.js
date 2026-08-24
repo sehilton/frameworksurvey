@@ -36,7 +36,7 @@ export default async (request, context) => {
   return new Response('Authentication required.', {
     status: 401,
     headers: {
-      'WWW-Authenticate': 'Basic realm="Framework Feedback Results", charset="UTF-8"',
+      'WWW-Authenticate': 'Basic realm="Results"',
     },
   });
 };
